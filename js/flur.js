@@ -12,16 +12,16 @@ gameviewer.height = window.innerHeight;
 document.addEventListener('keydown', (Event) => {
     Event.preventDefault()
     if (Event.key === 'd' || Event.key === 'D' || Event.key === 'ArrowRight') {
-        playerX += 5;
+        playerX += 10;
     }
     if (Event.key === 'a' || Event.key === 'A' || Event.key === 'ArrowLeft') {
-        playerX -= 5;
+        playerX -= 10;
     }
     if (Event.key === 'w' || Event.key === 'W' || Event.key === 'ArrowUp') {
-        playerY -= 5;
+        playerY -= 10;
     }
     if (Event.key === 's' || Event.key === 'S' || Event.key === 'ArrowDown') {
-        playerY += 5;
+        playerY += 10;
     }
 })
 
