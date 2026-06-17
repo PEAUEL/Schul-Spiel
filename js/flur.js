@@ -7,21 +7,23 @@ let worldX = 0;
 let levelWidth = 3000;
 let speedX = 0;
 let speedY = 0;
-const gravity = -1;
+const gravity = -1; // Hinweis: Ein negativer Wert zieht den Spieler nach oben, da speedY -= gravity gerechnet wird.
 gameviewer.width = window.innerWidth;
 gameviewer.height = window.innerHeight;
 
 document.addEventListener('keydown', (Event) => {
-    Event.preventDefault()
+    Event.preventDefault();
     if (Event.key === 'd' || Event.key === 'D' || Event.key === 'ArrowRight') {
         speedX = 10;
     }
     if (Event.key === 'a' || Event.key === 'A' || Event.key === 'ArrowLeft') {
         speedX = -10;
     }
-    if (Event.key === 'w' || Event.key === 'W' || Event.key === 'ArrowUp' || Event.key === 'Space') {
+    // Korrektur: " " statt "Space" für die Leertaste verwenden
+    if (Event.key === 'w' || Event.key === 'W' || Event.key === 'ArrowUp' || Event.key === ' ') {
         speedY = -10;
     }
+}); // <-- DIESE KLAMMER HAT GEFEHLT!
 
 brush.clearCanvas = function() {
     brush.clearRect(0, 0, gameviewer.width, gameviewer.height);
@@ -34,13 +36,15 @@ brush.drawPlayer = function(x, y, size, color) {
 
 function gameloop() {
     speedX *= 0.7;
-    speedY -= gravity;
+    speedY -= gravity; // Berechnet speedY - (-1) -> erhöht den Wert, Spieler fällt nach unten
     playerX += speedX;
     playerY += speedY;
+    
     if (playerY > 600) {
         playerY = 600;
         speedY = 0;
     }
+    
     brush.clearCanvas();
     brush.drawPlayer(playerX, playerY, 100, '#ff0000');
 
