@@ -7,7 +7,7 @@ let worldX = 0;
 let levelWidth = 3000;
 let speedX = 0;
 let speedY = 0;
-const gravity = 1;
+const gravity = -1;
 gameviewer.width = window.innerWidth;
 gameviewer.height = window.innerHeight;
 
@@ -36,7 +36,7 @@ function gameloop() {
     speedX *= 0.7;
     speedY -= gravity;
     playerX += speedX;
-    playerY -= speedY;
+    playerY += speedY;
     if (playerY > 600) {
         playerY = 600;
         speedY = 0;
