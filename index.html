@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schul Simulator</title>
+    <style>
+        /* Macht, dass alle Elemente im Formular untereinander stehen */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: sans-serif;
+            margin-top: 50px;
+        }
+
+        /* Setzt die Textareas und Striche nebeneinander */
+        .code-container {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Abstand zwischen den Boxen und Strichen */
+            margin-bottom: 20px;
+        }
+
+        /* Macht die Eingabeboxen kleiner und quadratischer */
+        .code-input {
+            width: 80px;
+            height: 40px;
+            font-size: 20px;
+            text-align: center;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            resize: none; /* Verhindert, dass man die Boxen größer ziehen kann */
+        }
+
+        /* Stylt die Bindestriche */
+        .trenner {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- e.preventDefault() im Onsubmit verhindert, dass die Seite beim Klick neu lädt -->
+    <form onsubmit="event.preventDefault();">
+        <h1>Gib den zwölfstelligen Aktivierungscode ein!</h1>
+        
+        <!-- Dieser Container hält die Boxen in einer Reihe nebeneinander -->
+        <div class="code-container">
+            <textarea id="aktivierung1" class="code-input" maxlength="4"></textarea>
+            <p class="trenner">-</p>
+            <textarea id="aktivierung2" class="code-input" maxlength="4"></textarea>
+            <p class="trenner">-</p>
+            <textarea id="aktivierung3" class="code-input" maxlength="4"></textarea>
+        </div>
+
+        <button id="formbtn">Bestätigen</button>
+    </form>
+
+    <script>
+        async function sha256(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        /* 
+           NEUER HASH-CODE FÜR "sdhf-shsa-oikj"
+           Selbst wenn jemand diesen Code sieht, kann er nicht auf das Passwort zurückschließen!
+        */
+        //Aktivierungscode: sdhf-shsa-oikj
+        const KORREKTER_HASH = "92f117300f67ae2dab047e4eb844449a1d1e73d9ca8a0440b5afc998e1d1c313";
+        
+        const button = document.getElementById('formbtn');
+
+        button.addEventListener('click', async () => {
+            let code1 = document.getElementById('aktivierung1').value.trim().toLowerCase();
+            let code2 = document.getElementById('aktivierung2').value.trim().toLowerCase();
+            let code3 = document.getElementById('aktivierung3').value.trim().toLowerCase();
+            
+            // Setzt die Eingabe zu "sdhf-shsa-oikj" zusammen
+            let code = `${code1}-${code2}-${code3}`;
+            
+            // Berechnet den Hash der Eingabe
+            const eingabeHash = await sha256(code);
+            
+            // Prüft den Hash
+            openandinitialize(eingabeHash);
+        });
+
+        function openandinitialize(eingabeHash) {
+            if (eingabeHash === KORREKTER_HASH) {
+                alert("Freigeschaltet! Viel Spaß beim Spiel.");
+                window.location.href = "html/flur.html"
+            } else {
+                alert("Falscher Aktivierungscode!");
+            }
+        }
+    </script>
+</body>
+</html>
