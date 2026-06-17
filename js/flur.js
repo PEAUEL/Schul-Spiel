@@ -1,5 +1,5 @@
-const gameviewer = document.getElementById("gamecanvas")
-const brush = gameviewer.getContext('2d')
+const gameviewer = document.getElementById("gamecanvas");
+const brush = gameviewer.getContext('2d');
 
 let playerX = 500;
 let playerY = 100;
