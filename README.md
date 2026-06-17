@@ -4,3 +4,6 @@ PEAUEL
   / /_/ / __/  / /| |/ / / // __/  / /    
  / ____/ /___ / ___ / /_/ // /___ / /___  
 /_/   /_____//_/  |_|\____//_____//_____/ 
+
+
+This Game is developed by PEAUEL, do not distribute!
