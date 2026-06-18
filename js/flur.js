@@ -23,6 +23,10 @@ const keys = {
     jump: false,
 };
 
+// Track touch/click state for tap detection
+let touchStartTime = 0;
+const TAP_THRESHOLD = 200; // ms - max duration to consider as a tap/jump
+
 // initialize canvas size and handle resizing
 function resizeCanvas() {
     gameviewer.width = window.innerWidth;
@@ -31,35 +35,61 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// keyboard handling: use keydown + keyup and track state
-document.addEventListener('keydown', (event) => {
-    // only prevent default for keys we handle
-    if (["ArrowLeft", "ArrowRight", "ArrowUp", " ", "a", "A", "d", "D", "w", "W"].includes(event.key)) {
-        event.preventDefault();
-    }
-
-    if (event.key === 'd' || event.key === 'D' || event.key === 'ArrowRight') {
+// Touch/Click handling for screen halves
+document.addEventListener('mousedown', (event) => {
+    touchStartTime = Date.now();
+    const screenCenterX = window.innerWidth / 2;
+    
+    if (event.clientX > screenCenterX) {
         keys.right = true;
-    }
-    if (event.key === 'a' || event.key === 'A' || event.key === 'ArrowLeft') {
+    } else {
         keys.left = true;
-    }
-    // jump input: start jump on keydown, but actual impulse applied in gameloop when on ground
-    if (event.key === 'w' || event.key === 'W' || event.key === 'ArrowUp' || event.key === ' ') {
-        keys.jump = true;
     }
 });
 
-document.addEventListener('keyup', (event) => {
-    if (event.key === 'd' || event.key === 'D' || event.key === 'ArrowRight') {
-        keys.right = false;
+document.addEventListener('mouseup', (event) => {
+    const touchDuration = Date.now() - touchStartTime;
+    const screenCenterX = window.innerWidth / 2;
+    
+    // Check if it was a quick tap (for jumping)
+    if (touchDuration < TAP_THRESHOLD) {
+        keys.jump = true;
+        // Jump impulse will be applied in gameloop when on ground
     }
-    if (event.key === 'a' || event.key === 'A' || event.key === 'ArrowLeft') {
+    
+    // Stop movement
+    if (event.clientX > screenCenterX) {
+        keys.right = false;
+    } else {
         keys.left = false;
     }
-    if (event.key === 'w' || event.key === 'W' || event.key === 'ArrowUp' || event.key === ' ') {
-        keys.jump = false;
+});
+
+// Touch handling for mobile
+document.addEventListener('touchstart', (event) => {
+    touchStartTime = Date.now();
+    const touch = event.touches[0];
+    const screenCenterX = window.innerWidth / 2;
+    
+    if (touch.clientX > screenCenterX) {
+        keys.right = true;
+    } else {
+        keys.left = true;
     }
+});
+
+document.addEventListener('touchend', (event) => {
+    const touchDuration = Date.now() - touchStartTime;
+    
+    // Check if it was a quick tap (for jumping)
+    if (touchDuration < TAP_THRESHOLD) {
+        keys.jump = true;
+        // Jump impulse will be applied in gameloop when on ground
+    }
+    
+    // Stop movement
+    keys.right = false;
+    keys.left = false;
 });
 
 brush.clearCanvas = function() {
@@ -101,8 +131,7 @@ function gameloop() {
         // apply jump impulse only if jump key is pressed now
         if (keys.jump) {
             speedY = JUMP_VELOCITY;
-            // optional: consume the jump until key is released to avoid repeated immediate jumps
-            // keys.jump = false; // uncomment to require releasing the jump key before next jump
+            keys.jump = false; // consume the jump
         }
     }
 
