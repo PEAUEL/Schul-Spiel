@@ -1,0 +1,352 @@
+[
+    {
+        "id": 1,
+        "title": "Einfache Addition",
+        "description": "Berechne: 2 + 3 = ?",
+        "correctAnswer": "5",
+        "type": "text"
+    },
+    {
+        "id": 2,
+        "title": "Einfache Addition",
+        "description": "Berechne: 4 + 5 = ?",
+        "correctAnswer": "9",
+        "type": "text"
+    },
+    {
+        "id": 3,
+        "title": "Einfache Subtraktion",
+        "description": "Berechne: 10 - 3 = ?",
+        "correctAnswer": "7",
+        "type": "text"
+    },
+    {
+        "id": 4,
+        "title": "Einfache Subtraktion",
+        "description": "Berechne: 8 - 2 = ?",
+        "correctAnswer": "6",
+        "type": "text"
+    },
+    {
+        "id": 5,
+        "title": "Einfache Multiplikation",
+        "description": "Berechne: 2 × 3 = ?",
+        "correctAnswer": "6",
+        "type": "text"
+    },
+    {
+        "id": 6,
+        "title": "Einfache Multiplikation",
+        "description": "Berechne: 5 × 2 = ?",
+        "correctAnswer": "10",
+        "type": "text"
+    },
+    {
+        "id": 7,
+        "title": "Einfache Division",
+        "description": "Berechne: 10 ÷ 2 = ?",
+        "correctAnswer": "5",
+        "type": "text"
+    },
+    {
+        "id": 8,
+        "title": "Einfache Division",
+        "description": "Berechne: 12 ÷ 3 = ?",
+        "correctAnswer": "4",
+        "type": "text"
+    },
+    {
+        "id": 9,
+        "title": "Addition mit größeren Zahlen",
+        "description": "Berechne: 15 + 12 = ?",
+        "correctAnswer": "27",
+        "type": "text"
+    },
+    {
+        "id": 10,
+        "title": "Addition mit größeren Zahlen",
+        "description": "Berechne: 23 + 17 = ?",
+        "correctAnswer": "40",
+        "type": "text"
+    },
+    {
+        "id": 11,
+        "title": "Subtraktion mit größeren Zahlen",
+        "description": "Berechne: 25 - 8 = ?",
+        "correctAnswer": "17",
+        "type": "text"
+    },
+    {
+        "id": 12,
+        "title": "Subtraktion mit größeren Zahlen",
+        "description": "Berechne: 50 - 23 = ?",
+        "correctAnswer": "27",
+        "type": "text"
+    },
+    {
+        "id": 13,
+        "title": "Multiplikation mit 1x1",
+        "description": "Berechne: 3 × 4 = ?",
+        "correctAnswer": "12",
+        "type": "text"
+    },
+    {
+        "id": 14,
+        "title": "Multiplikation mit 1x1",
+        "description": "Berechne: 7 × 6 = ?",
+        "correctAnswer": "42",
+        "type": "text"
+    },
+    {
+        "id": 15,
+        "title": "Multiplikation mit 1x1",
+        "description": "Berechne: 8 × 9 = ?",
+        "correctAnswer": "72",
+        "type": "text"
+    },
+    {
+        "id": 16,
+        "title": "Division aus dem 1x1",
+        "description": "Berechne: 24 ÷ 6 = ?",
+        "correctAnswer": "4",
+        "type": "text"
+    },
+    {
+        "id": 17,
+        "title": "Division aus dem 1x1",
+        "description": "Berechne: 56 ÷ 8 = ?",
+        "correctAnswer": "7",
+        "type": "text"
+    },
+    {
+        "id": 18,
+        "title": "Zwei Operationen",
+        "description": "Berechne: 3 + 2 × 4 = ?",
+        "correctAnswer": "11",
+        "type": "text"
+    },
+    {
+        "id": 19,
+        "title": "Zwei Operationen",
+        "description": "Berechne: 10 - 2 + 3 = ?",
+        "correctAnswer": "11",
+        "type": "text"
+    },
+    {
+        "id": 20,
+        "title": "Multiplikation größerer Zahlen",
+        "description": "Berechne: 12 × 5 = ?",
+        "correctAnswer": "60",
+        "type": "text"
+    },
+    {
+        "id": 21,
+        "title": "Multiplikation größerer Zahlen",
+        "description": "Berechne: 15 × 4 = ?",
+        "correctAnswer": "60",
+        "type": "text"
+    },
+    {
+        "id": 22,
+        "title": "Division größerer Zahlen",
+        "description": "Berechne: 72 ÷ 9 = ?",
+        "correctAnswer": "8",
+        "type": "text"
+    },
+    {
+        "id": 23,
+        "title": "Division größerer Zahlen",
+        "description": "Berechne: 100 ÷ 5 = ?",
+        "correctAnswer": "20",
+        "type": "text"
+    },
+    {
+        "id": 24,
+        "title": "Komplexe Aufgabe",
+        "description": "Berechne: 5 × 3 + 10 = ?",
+        "correctAnswer": "25",
+        "type": "text"
+    },
+    {
+        "id": 25,
+        "title": "Komplexe Aufgabe",
+        "description": "Berechne: 20 ÷ 4 + 5 = ?",
+        "correctAnswer": "10",
+        "type": "text"
+    },
+    {
+        "id": 26,
+        "title": "Komplexe Aufgabe",
+        "description": "Berechne: 2 × (3 + 4) = ?",
+        "correctAnswer": "14",
+        "type": "text"
+    },
+    {
+        "id": 27,
+        "title": "Komplexe Aufgabe",
+        "description": "Berechne: (15 + 5) ÷ 4 = ?",
+        "correctAnswer": "5",
+        "type": "text"
+    },
+    {
+        "id": 28,
+        "title": "Multiplikation im 2x2-Bereich",
+        "description": "Berechne: 12 × 11 = ?",
+        "correctAnswer": "132",
+        "type": "text"
+    },
+    {
+        "id": 29,
+        "title": "Multiplikation im 2x2-Bereich",
+        "description": "Berechne: 15 × 13 = ?",
+        "correctAnswer": "195",
+        "type": "text"
+    },
+    {
+        "id": 30,
+        "title": "Multiplikation im 2x2-Bereich",
+        "description": "Berechne: 20 × 15 = ?",
+        "correctAnswer": "300",
+        "type": "text"
+    },
+    {
+        "id": 31,
+        "title": "Mehrgliedrige Aufgabe",
+        "description": "Berechne: 3 + 4 × 5 - 2 = ?",
+        "correctAnswer": "21",
+        "type": "text"
+    },
+    {
+        "id": 32,
+        "title": "Mehrgliedrige Aufgabe",
+        "description": "Berechne: 100 ÷ 5 + 10 = ?",
+        "correctAnswer": "30",
+        "type": "text"
+    },
+    {
+        "id": 33,
+        "title": "Mehrgliedrige Aufgabe",
+        "description": "Berechne: 6 × 7 - 12 = ?",
+        "correctAnswer": "30",
+        "type": "text"
+    },
+    {
+        "id": 34,
+        "title": "Klammernaufgabe",
+        "description": "Berechne: (10 + 5) × 2 = ?",
+        "correctAnswer": "30",
+        "type": "text"
+    },
+    {
+        "id": 35,
+        "title": "Klammernaufgabe",
+        "description": "Berechne: (20 - 5) ÷ 3 = ?",
+        "correctAnswer": "5",
+        "type": "text"
+    },
+    {
+        "id": 36,
+        "title": "Klammernaufgabe",
+        "description": "Berechne: 2 × (6 + 9) = ?",
+        "correctAnswer": "30",
+        "type": "text"
+    },
+    {
+        "id": 37,
+        "title": "Fortgeschrittene Multiplikation",
+        "description": "Berechne: 25 × 4 = ?",
+        "correctAnswer": "100",
+        "type": "text"
+    },
+    {
+        "id": 38,
+        "title": "Fortgeschrittene Multiplikation",
+        "description": "Berechne: 30 × 5 = ?",
+        "correctAnswer": "150",
+        "type": "text"
+    },
+    {
+        "id": 39,
+        "title": "Fortgeschrittene Multiplikation",
+        "description": "Berechne: 18 × 6 = ?",
+        "correctAnswer": "108",
+        "type": "text"
+    },
+    {
+        "id": 40,
+        "title": "Fortgeschrittene Division",
+        "description": "Berechne: 144 ÷ 12 = ?",
+        "correctAnswer": "12",
+        "type": "text"
+    },
+    {
+        "id": 41,
+        "title": "Fortgeschrittene Division",
+        "description": "Berechne: 150 ÷ 6 = ?",
+        "correctAnswer": "25",
+        "type": "text"
+    },
+    {
+        "id": 42,
+        "title": "Fortgeschrittene Division",
+        "description": "Berechne: 200 ÷ 8 = ?",
+        "correctAnswer": "25",
+        "type": "text"
+    },
+    {
+        "id": 43,
+        "title": "Komplexe Klammerrechnung",
+        "description": "Berechne: (15 + 5) × (10 - 5) = ?",
+        "correctAnswer": "100",
+        "type": "text"
+    },
+    {
+        "id": 44,
+        "title": "Komplexe Klammerrechnung",
+        "description": "Berechne: (40 ÷ 5) × 3 = ?",
+        "correctAnswer": "24",
+        "type": "text"
+    },
+    {
+        "id": 45,
+        "title": "Komplexe Klammerrechnung",
+        "description": "Berechne: (30 - 10) ÷ (20 ÷ 10) = ?",
+        "correctAnswer": "10",
+        "type": "text"
+    },
+    {
+        "id": 46,
+        "title": "Mittelschwere Aufgabe",
+        "description": "Berechne: 7 × 8 + 4 = ?",
+        "correctAnswer": "60",
+        "type": "text"
+    },
+    {
+        "id": 47,
+        "title": "Mittelschwere Aufgabe",
+        "description": "Berechne: 9 × 9 - 15 = ?",
+        "correctAnswer": "66",
+        "type": "text"
+    },
+    {
+        "id": 48,
+        "title": "Mittelschwere Aufgabe",
+        "description": "Berechne: 5 + 6 × 7 = ?",
+        "correctAnswer": "47",
+        "type": "text"
+    },
+    {
+        "id": 49,
+        "title": "Schwere Multiplikation",
+        "description": "Berechne: 21 × 4 = ?",
+        "correctAnswer": "84",
+        "type": "text"
+    },
+    {
+        "id": 50,
+        "title": "Schwere Multiplikation",
+        "description": "Berechne: 16 × 5 = ?",
+        "correctAnswer": "80",
+        "type": "text"
+    }
+]
