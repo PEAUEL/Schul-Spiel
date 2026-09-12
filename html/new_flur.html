@@ -63,9 +63,26 @@ const player = {
     isGrounded: false
 };
 
+// Kamera-System für Scrolling
+const camera = {
+    x: 0,
+    y: 0,
+    width: canvas.width,
+    height: canvas.height,
+    worldWidth: 3000, // Weltgröße (kann größer sein als Canvas)
+    worldHeight: canvas.height
+};
+
 // Umwelt-Eigenschaften
 const gravity = 0.8;
 const floorY = canvas.height - 50;
+
+// Türen (Interaktive Objekte mit Links)
+const doors = [
+    { x: 400, y: floorY - 100, width: 80, height: 100, color: "#8b4513", link: "room1.html", label: "Raum 1" },
+    { x: 1200, y: floorY - 100, width: 80, height: 100, color: "#8b4513", link: "room2.html", label: "Raum 2" },
+    { x: 2300, y: floorY - 100, width: 80, height: 100, color: "#8b4513", link: "room3.html", label: "Raum 3" }
+];
 
 // Touch/Klick-Steuerung Variablen
 let touchStartTime = 0;
@@ -76,6 +93,7 @@ const CLICK_THRESHOLD = 200; // Millisekunden für einen "kurzen Klick"
 // Event Listener für Klicks/Touches
 window.addEventListener("mousedown", handleStart);
 window.addEventListener("mouseup", handleEnd);
+window.addEventListener("click", handleClick);
 window.addEventListener("touchstart", (e) => { e.preventDefault(); handleStart(e.touches[0]); }, { passive: false });
 window.addEventListener("touchend", (e) => { e.preventDefault(); handleEnd(); }, { passive: false });
 
@@ -113,10 +131,45 @@ function handleEnd() {
     holdDirection = "";
 }
 
+function handleClick(e) {
+    // Konvertiere Klick-Position zu Welt-Koordinaten
+    const rect = canvas.getBoundingClientRect();
+    const clickCanvasX = ((e.clientX - rect.left) / rect.width) * canvas.width;
+    const clickCanvasY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+    
+    const worldClickX = clickCanvasX + camera.x;
+    const worldClickY = clickCanvasY + camera.y;
+
+    // Überprüfe, ob eine Tür geklickt wurde
+    for (let door of doors) {
+        if (worldClickX >= door.x && worldClickX <= door.x + door.width &&
+            worldClickY >= door.y && worldClickY <= door.y + door.height) {
+            window.location.href = door.link;
+            return;
+        }
+    }
+}
+
 // Tastatur-Support als Backup
 const keys = {};
 window.addEventListener("keydown", (e) => keys[e.code] = true);
 window.addEventListener("keyup", (e) => keys[e.code] = false);
+
+// Kamera aktualisieren (Scrolling-System)
+function updateCamera() {
+    // Spieler-Bildschirmposition
+    const playerScreenX = player.x - camera.x;
+    const screenThird = canvas.width / 3;
+
+    // Wenn der Spieler den linken Drittel verlässt, scrolle die Kamera
+    if (playerScreenX < screenThird && camera.x > 0) {
+        camera.x = Math.max(0, player.x - screenThird);
+    }
+    // Wenn der Spieler den rechten Drittel verlässt, scrolle die Kamera
+    else if (playerScreenX > screenThird * 2 && camera.x < camera.worldWidth - canvas.width) {
+        camera.x = Math.min(camera.worldWidth - canvas.width, player.x - screenThird * 2);
+    }
+}
 
 // Game Loop
 function update() {
@@ -153,11 +206,14 @@ function update() {
         player.isGrounded = true;
     }
 
-    // 5. Grenzen des Spielfelds (links/rechts)
+    // 5. Grenzen des Spielfelds (links/rechts in der Welt)
     if (player.x < 0) player.x = 0;
-    if (player.x + player.size > canvas.width) player.x = canvas.width - player.size;
+    if (player.x + player.size > camera.worldWidth) player.x = camera.worldWidth - player.size;
 
-    // 6. Zeichnen
+    // 6. Kamera aktualisieren
+    updateCamera();
+
+    // 7. Zeichnen
     draw();
 
     requestAnimationFrame(update);
@@ -178,18 +234,50 @@ function draw() {
 
     // Boden zeichnen
     ctx.fillStyle = "#8d6e63";
-    ctx.fillRect(0, floorY, canvas.width, canvas.height - floorY);
+    ctx.fillRect(-camera.x, floorY, camera.worldWidth, canvas.height - floorY);
     ctx.fillStyle = "#4caf50"; // Graslinie
-    ctx.fillRect(0, floorY, canvas.width, 10);
+    ctx.fillRect(-camera.x, floorY, camera.worldWidth, 10);
+
+    // Türen zeichnen
+    for (let door of doors) {
+        const screenX = door.x - camera.x;
+        const screenY = door.y - camera.y;
+
+        // Nur zeichnen, wenn im Sichtbereich
+        if (screenX + door.width > 0 && screenX < canvas.width) {
+            ctx.fillStyle = door.color;
+            ctx.fillRect(screenX, screenY, door.width, door.height);
+
+            // Türrahmen (dunkler Rand)
+            ctx.strokeStyle = "#654321";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(screenX, screenY, door.width, door.height);
+
+            // Türknauf
+            ctx.fillStyle = "#ffd700";
+            ctx.beginPath();
+            ctx.arc(screenX + door.width - 15, screenY + door.height / 2, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Label
+            ctx.fillStyle = "rgba(0,0,0,0.7)";
+            ctx.font = "12px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(door.label, screenX + door.width / 2, screenY + door.height + 20);
+        }
+    }
 
     // Spieler (Rotes Quadrat) zeichnen
+    const playerScreenX = player.x - camera.x;
+    const playerScreenY = player.y - camera.y;
+
     ctx.fillStyle = player.color;
-    ctx.fillRect(player.x, player.y, player.size, player.size);
+    ctx.fillRect(playerScreenX, playerScreenY, player.size, player.size);
     
     // Schwarzer Rand für den Spieler
     ctx.strokeStyle = "#333";
     ctx.lineWidth = 2;
-    ctx.strokeRect(player.x, player.y, player.size, player.size);
+    ctx.strokeRect(playerScreenX, playerScreenY, player.size, player.size);
 
     // Steuerungs-Hinweistext
     ctx.fillStyle = "rgba(0,0,0,0.4)";
@@ -198,6 +286,13 @@ function draw() {
     ctx.fillText("<- Halten: Links", canvas.width / 6, 30);
     ctx.fillText("Kurzer Klick: Springen", canvas.width / 2, 30);
     ctx.fillText("Halten: Rechts ->", (canvas.width / 6) * 5, 30);
+
+    // Level-Fortschritt anzeigen
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "left";
+    const progress = Math.round((player.x / camera.worldWidth) * 100);
+    ctx.fillText(`Fortschritt: ${progress}%`, 10, canvas.height - 10);
 }
 
 // Spiel starten
