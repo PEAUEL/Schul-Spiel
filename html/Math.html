@@ -1,1 +1,525 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathe Klassenzimmer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .classroom {
+            width: 100%;
+            max-width: 1000px;
+            height: 600px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #8B4513;
+        }
+
+        /* Wandelemente */
+        .classroom::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to bottom, #D2B48C, #A0826D);
+            z-index: 1;
+        }
+
+        .chalkboard {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 250px;
+            height: 200px;
+            background: #2C3E50;
+            border: 8px solid #8B4513;
+            border-radius: 8px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .chalkboard-text {
+            color: #FFD700;
+            padding: 15px;
+            font-size: 14px;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Tisch */
+        .desk {
+            position: absolute;
+            bottom: 80px;
+            left: 50px;
+            width: 200px;
+            height: 140px;
+            cursor: pointer;
+            z-index: 3;
+            transition: transform 0.2s ease;
+        }
+
+        .desk:hover {
+            transform: scale(1.05);
+        }
+
+        .desk-top {
+            position: absolute;
+            bottom: 70px;
+            width: 200px;
+            height: 40px;
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 2px solid #654321;
+        }
+
+        .desk-leg {
+            position: absolute;
+            background: linear-gradient(90deg, #654321, #8B4513);
+            border: 1px solid #3E2723;
+        }
+
+        .desk-leg-1 {
+            bottom: 0;
+            left: 20px;
+            width: 15px;
+            height: 70px;
+        }
+
+        .desk-leg-2 {
+            bottom: 0;
+            right: 20px;
+            width: 15px;
+            height: 70px;
+        }
+
+        .desk-label {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        /* Overlay Modal */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+            z-index: 1001;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-content {
+            padding: 30px;
+        }
+
+        .task {
+            margin-bottom: 20px;
+        }
+
+        .task-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .task-description {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .task-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .task-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .task-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-weight: bold;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #D4EDDA;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .feedback.incorrect {
+            background: #F8D7DA;
+            color: #721C24;
+            border: 2px solid #f5222d;
+        }
+
+        .navigation-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: #ddd;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #bbb;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .task-counter {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="classroom">
+        <!-- Tafel -->
+        <div class="chalkboard">
+            <div class="chalkboard-text">Mathe Aufgaben</div>
+        </div>
+
+        <!-- Tisch -->
+        <div class="desk" id="desk">
+            <div class="desk-top"></div>
+            <div class="desk-leg desk-leg-1"></div>
+            <div class="desk-leg desk-leg-2"></div>
+            <div class="desk-label">📚 Tisch</div>
+        </div>
+    </div>
+
+    <!-- Overlay Modal -->
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Aufgabe</h2>
+                <button class="close-btn" id="closeBtn">&times;</button>
+            </div>
+            <div class="modal-content" id="modalContent">
+                <!-- Aufgaben werden hier eingefügt -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tasks = [];
+        let currentTaskIndex = 0;
+
+        // Aufgaben aus JSON laden
+        async function loadTasks() {
+            try {
+                const response = await fetch('../data/tasks.json');
+                if (!response.ok) {
+                    throw new Error('JSON-Datei nicht gefunden');
+                }
+                tasks = await response.json();
+                console.log('Aufgaben geladen:', tasks);
+            } catch (error) {
+                console.error('Fehler beim Laden der Aufgaben:', error);
+                tasks = [
+                    {
+                        id: 1,
+                        title: "Einfache Addition",
+                        description: "Berechne: 5 + 3 = ?",
+                        correctAnswer: "8",
+                        type: "text"
+                    },
+                    {
+                        id: 2,
+                        title: "Multiplikation",
+                        description: "Berechne: 7 × 6 = ?",
+                        correctAnswer: "42",
+                        type: "text"
+                    },
+                    {
+                        id: 3,
+                        title: "Subtraktion",
+                        description: "Berechne: 15 - 7 = ?",
+                        correctAnswer: "8",
+                        type: "text"
+                    }
+                ];
+            }
+        }
+
+        // Modal öffnen
+        function openModal() {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            displayTask(currentTaskIndex);
+        }
+
+        // Modal schließen
+        function closeModal() {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.remove('active');
+            currentTaskIndex = 0;
+        }
+
+        // Aufgabe anzeigen
+        function displayTask(index) {
+            if (!tasks || tasks.length === 0) return;
+
+            const task = tasks[index];
+            const modalContent = document.getElementById('modalContent');
+            const modalTitle = document.getElementById('modalTitle');
+
+            modalTitle.textContent = `${task.title} (${index + 1}/${tasks.length})`;
+
+            modalContent.innerHTML = `
+                <div class="task">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-description">${task.description}</div>
+                    <div class="task-input-group">
+                        <input 
+                            type="text" 
+                            class="task-input" 
+                            id="answerInput" 
+                            placeholder="Deine Antwort eingeben..."
+                            autocomplete="off"
+                        >
+                        <button class="submit-btn" onclick="checkAnswer()">Absenden</button>
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="navigation-btns">
+                        <button class="nav-btn" id="prevBtn" onclick="previousTask()" ${index === 0 ? 'disabled' : ''}>← Zurück</button>
+                        <button class="nav-btn" id="nextBtn" onclick="nextTask()" ${index === tasks.length - 1 ? 'disabled' : ''}>Weiter →</button>
+                    </div>
+                    <div class="task-counter">Aufgabe ${index + 1} von ${tasks.length}</div>
+                </div>
+            `;
+
+            // Fokus auf Input
+            setTimeout(() => document.getElementById('answerInput').focus(), 100);
+
+            // Enter zum Absenden
+            document.getElementById('answerInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkAnswer();
+            });
+        }
+
+        // Antwort überprüfen
+        function checkAnswer() {
+            const task = tasks[currentTaskIndex];
+            const input = document.getElementById('answerInput');
+            const feedback = document.getElementById('feedback');
+            const userAnswer = input.value.trim();
+
+            if (!userAnswer) {
+                feedback.textContent = 'Bitte geben Sie eine Antwort ein!';
+                feedback.classList.remove('correct', 'incorrect');
+                feedback.classList.add('incorrect');
+                feedback.classList.add('show');
+                return;
+            }
+
+            const isCorrect = userAnswer === task.correctAnswer;
+
+            feedback.classList.remove('correct', 'incorrect');
+            if (isCorrect) {
+                feedback.textContent = '✓ Richtig! Glückwunsch!';
+                feedback.classList.add('correct');
+            } else {
+                feedback.textContent = `✗ Leider falsch. Die richtige Antwort ist: ${task.correctAnswer}`;
+                feedback.classList.add('incorrect');
+            }
+            feedback.classList.add('show');
+            input.disabled = true;
+        }
+
+        // Zu nächster Aufgabe
+        function nextTask() {
+            if (currentTaskIndex < tasks.length - 1) {
+                currentTaskIndex++;
+                displayTask(currentTaskIndex);
+            }
+        }
+
+        // Zu vorheriger Aufgabe
+        function previousTask() {
+            if (currentTaskIndex > 0) {
+                currentTaskIndex--;
+                displayTask(currentTaskIndex);
+            }
+        }
+
+        // Event Listener
+        document.getElementById('desk').addEventListener('click', openModal);
+        document.getElementById('closeBtn').addEventListener('click', closeModal);
+        document.getElementById('overlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('overlay')) {
+                closeModal();
+            }
+        });
+
+        // Beim Laden der Seite
+        window.addEventListener('load', loadTasks);
+    </script>
+</body>
+</html>
