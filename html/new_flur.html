@@ -95,7 +95,7 @@ window.addEventListener("mousedown", handleStart);
 window.addEventListener("mouseup", handleEnd);
 window.addEventListener("click", handleClick);
 window.addEventListener("touchstart", (e) => { e.preventDefault(); handleStart(e.touches[0]); }, { passive: false });
-window.addEventListener("touchend", (e) => { e.preventDefault(); handleEnd(); }, { passive: false });
+window.addEventListener("touchend", (e) => { e.preventDefault(); handleEnd(); handleClickTouch(e); }, { passive: false });
 
 function handleStart(e) {
     touchStartTime = Date.now();
@@ -132,6 +132,17 @@ function handleEnd() {
 }
 
 function handleClick(e) {
+    checkDoorClick(e);
+}
+
+function handleClickTouch(e) {
+    // Für Touch-Events: nutze den letzten Touch-Punkt
+    if (e.changedTouches && e.changedTouches.length > 0) {
+        checkDoorClick(e.changedTouches[0]);
+    }
+}
+
+function checkDoorClick(e) {
     // Konvertiere Klick-Position zu Welt-Koordinaten
     const rect = canvas.getBoundingClientRect();
     const clickCanvasX = ((e.clientX - rect.left) / rect.width) * canvas.width;
@@ -157,17 +168,18 @@ window.addEventListener("keyup", (e) => keys[e.code] = false);
 
 // Kamera aktualisieren (Scrolling-System)
 function updateCamera() {
-    // Spieler-Bildschirmposition
-    const playerScreenX = player.x - camera.x;
+    // Spieler-Bildschirmposition (Mittelpunkt des Spielers)
+    const playerCenter = player.x + player.size / 2;
+    const playerScreenX = playerCenter - camera.x;
     const screenThird = canvas.width / 3;
 
     // Wenn der Spieler den linken Drittel verlässt, scrolle die Kamera
     if (playerScreenX < screenThird && camera.x > 0) {
-        camera.x = Math.max(0, player.x - screenThird);
+        camera.x = Math.max(0, playerCenter - screenThird);
     }
     // Wenn der Spieler den rechten Drittel verlässt, scrolle die Kamera
     else if (playerScreenX > screenThird * 2 && camera.x < camera.worldWidth - canvas.width) {
-        camera.x = Math.min(camera.worldWidth - canvas.width, player.x - screenThird * 2);
+        camera.x = Math.min(camera.worldWidth - canvas.width, playerCenter - screenThird * 2);
     }
 }
 
