@@ -1,0 +1,195 @@
+<DOCTYPE html>
+<html>
+    <head>
+        <title>Flur</title>
+                <!-- 1. Vollbildmodus (Macht die Webseite   zur App ohne Safari-Suchleiste) -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- 2. Name auf dem Home-Bildschirm (Überschreibt den Standardnamen) -->
+        <meta name="apple-mobile-web-app-title" content="Schul Simulant">
+
+    <!-- 3. Design der Statusleiste oben (iOS-Uhrzeit und Akku-Anzeige) -->
+    <!-- Optionen: "default" (weiß), "black" (schwarz) oder "black-transluce(transparent/schwebend) --> 
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: sans-serif;
+            user-select: none;
+        }
+        canvas {
+            background-color: #e0f7fa;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="800" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Spieler-Eigenschaften
+const player = {
+    x: 400,
+    y: 300,
+    size: 40,
+    color: "#ff3333",
+    velocityX: 0,
+    velocityY: 0,
+    speed: 6,
+    jumpForce: -15,
+    isGrounded: false
+};
+
+// Umwelt-Eigenschaften
+const gravity = 0.8;
+const floorY = canvas.height - 50;
+
+// Touch/Klick-Steuerung Variablen
+let touchStartTime = 0;
+let isHolding = false;
+let holdDirection = ""; // "left" oder "right"
+const CLICK_THRESHOLD = 200; // Millisekunden für einen "kurzen Klick"
+
+// Event Listener für Klicks/Touches
+window.addEventListener("mousedown", handleStart);
+window.addEventListener("mouseup", handleEnd);
+window.addEventListener("touchstart", (e) => { e.preventDefault(); handleStart(e.touches[0]); }, { passive: false });
+window.addEventListener("touchend", (e) => { e.preventDefault(); handleEnd(); }, { passive: false });
+
+function handleStart(e) {
+    touchStartTime = Date.now();
+    isHolding = true;
+
+    // Klick-Position im Canvas bestimmen
+    const rect = canvas.getBoundingClientRect();
+    const clickX = ((e.clientX - rect.left) / rect.width) * canvas.width;
+
+    const canvasThird = canvas.width / 3;
+
+    if (clickX < canvasThird) {
+        holdDirection = "left";
+    } else if (clickX > canvasThird * 2) {
+        holdDirection = "right";
+    } else {
+        holdDirection = "middle";
+    }
+}
+
+function handleEnd() {
+    const touchDuration = Date.now() - touchStartTime;
+    isHolding = false;
+
+    // Wenn der Klick kurz war, springt die Figur (egal wo geklickt wurde)
+    if (touchDuration < CLICK_THRESHOLD) {
+        if (player.isGrounded) {
+            player.velocityY = player.jumpForce;
+            player.isGrounded = false;
+        }
+    }
+    
+    holdDirection = "";
+}
+
+// Tastatur-Support als Backup
+const keys = {};
+window.addEventListener("keydown", (e) => keys[e.code] = true);
+window.addEventListener("keyup", (e) => keys[e.code] = false);
+
+// Game Loop
+function update() {
+    // 1. Bewegung verarbeiten (Maus/Touch)
+    if (isHolding && (Date.now() - touchStartTime) >= CLICK_THRESHOLD) {
+        if (holdDirection === "left") {
+            player.velocityX = -player.speed;
+        } else if (holdDirection === "right") {
+            player.velocityX = player.speed;
+        }
+    } else {
+        player.velocityX = 0;
+    }
+
+    // Backup: Tastatur-Steuerung (Pfeiltasten oder WASD)
+    if (keys["ArrowLeft"] || keys["KeyA"]) player.velocityX = -player.speed;
+    if (keys["ArrowRight"] || keys["KeyD"]) player.velocityX = player.speed;
+    if ((keys["Space"] || keys["ArrowUp"] || keys["KeyW"]) && player.isGrounded) {
+        player.velocityY = player.jumpForce;
+        player.isGrounded = false;
+    }
+
+    // 2. Schwerkraft anwenden
+    player.velocityY += gravity;
+
+    // 3. Positionen updaten
+    player.x += player.velocityX;
+    player.y += player.velocityY;
+
+    // 4. Kollision mit dem Boden
+    if (player.y + player.size >= floorY) {
+        player.y = floorY - player.size;
+        player.velocityY = 0;
+        player.isGrounded = true;
+    }
+
+    // 5. Grenzen des Spielfelds (links/rechts)
+    if (player.x < 0) player.x = 0;
+    if (player.x + player.size > canvas.width) player.x = canvas.width - player.size;
+
+    // 6. Zeichnen
+    draw();
+
+    requestAnimationFrame(update);
+}
+
+function draw() {
+    // Canvas leeren
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Hintergrund (Himmel)
+    ctx.fillStyle = "#e0f7fa";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Drittel-Zonen zur Orientierung leicht einzeichnen
+    ctx.fillStyle = "rgba(0, 0, 0, 0.03)";
+    ctx.fillRect(0, 0, canvas.width / 3, canvas.height);
+    ctx.fillRect((canvas.width / 3) * 2, 0, canvas.width / 3, canvas.height);
+
+    // Boden zeichnen
+    ctx.fillStyle = "#8d6e63";
+    ctx.fillRect(0, floorY, canvas.width, canvas.height - floorY);
+    ctx.fillStyle = "#4caf50"; // Graslinie
+    ctx.fillRect(0, floorY, canvas.width, 10);
+
+    // Spieler (Rotes Quadrat) zeichnen
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+    
+    // Schwarzer Rand für den Spieler
+    ctx.strokeStyle = "#333";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(player.x, player.y, player.size, player.size);
+
+    // Steuerungs-Hinweistext
+    ctx.fillStyle = "rgba(0,0,0,0.4)";
+    ctx.font = "16px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("<- Halten: Links", canvas.width / 6, 30);
+    ctx.fillText("Kurzer Klick: Springen", canvas.width / 2, 30);
+    ctx.fillText("Halten: Rechts ->", (canvas.width / 6) * 5, 30);
+}
+
+// Spiel starten
+update();
+</script>
